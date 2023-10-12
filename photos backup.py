@@ -223,6 +223,5 @@ vk = VK(vk_access_token, vk_user_id)
 
 yd.upload_photos()
 gdrive = Google_Drive('root')
-# yd.create_folder()
-
 gdrive.upload_file()
+
