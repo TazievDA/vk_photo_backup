@@ -222,6 +222,7 @@ yd = YD(yd_token)
 vk = VK(vk_access_token, vk_user_id)
 
 yd.upload_photos()
+
 gdrive = Google_Drive('root')
 gdrive.upload_file()
 
