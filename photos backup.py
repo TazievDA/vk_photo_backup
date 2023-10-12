@@ -216,7 +216,7 @@ class Google_Drive:
 vk_access_token = 'vk_token'
 vk_user_id = input('Введите ID пользователя ВКонтакте: ')
 
-yd_token = 'yd_token'
+yd_token = input('Введите ваш токен с Полигона Яндекс.Диск: ')
 
 yd = YD(yd_token)
 vk = VK(vk_access_token, vk_user_id)
