@@ -10,7 +10,6 @@ class VK:
     def __init__(self, access_token, user_id, version='5.154'):
         self.token = access_token
         self.id = user_id
-        self.version = version
         self.params = {'access_token': self.token, 'v': version}
 
     # Для проверки изменения названия выгружаем 8 фотографий, так как на 8-й фотографии одинаковое количество лайков.
@@ -26,6 +25,7 @@ class VK:
         else:
             return 'Неверный ввод.'
         params = {
+            'owner_id': self.id
             'extended': 1,
             'count': 8,
             'album_id': album,
@@ -43,15 +43,7 @@ class VK:
         items = self.__download_photos()
         for item in items:
             for size in item.get('sizes')[::-1]:
-                if size.get('type') == 'z':
-                    photos_info[item.get('id')] = {'url': size.get('url'), 'size': size.get('type'),
-                                                   'likes': item.get('likes', {}).get('count'),
-                                                   'date': item.get('date')}
-                elif size.get('type') == 'y' and item.get('id') not in photos_info:
-                    photos_info[item.get('id')] = {'url': size.get('url'), 'size': size.get('type'),
-                                                   'likes': item.get('likes', {}).get('count'),
-                                                   'date': item.get('date')}
-                elif size.get('type') == 'x' and item.get('id') not in photos_info:
+                if size.get('type') == 'z' or size.get('type') == 'y' or size.get('type') == 'x' and item.get('id') not in photos_info:
                     photos_info[item.get('id')] = {'url': size.get('url'), 'size': size.get('type'),
                                                    'likes': item.get('likes', {}).get('count'),
                                                    'date': item.get('date')}
@@ -142,31 +134,31 @@ class YD:
             print(f'Начинаем загрузку файла {filename} в Яндекс.Диск.')
             with open(file, 'rb') as f:
                 response = requests.put(link, files={'file': f})
-                if response.status_code == 201:
-                    print(f'Статус загрузки файла {filename}:'
-                          f' {response.status_code} — успешно загружено.')
-                elif response.status_code == 202:
-                    print(
-                        f'Статус загрузки файла {filename}:'
-                        f' {response.status_code} — файл принят сервером, но еще не был перенесен непосредственно '
-                        f'в Яндекс.Диск.')
-                elif response.status_code == 412:
-                    print(
-                        f'Статус загрузки файла {filename}:'
-                        f' {response.status_code} — при дозагрузке файла был передан неверный диапазон '
-                        f'в заголовке Content-Range')
-                elif response.status_code == 413:
-                    print(
-                        f'Статус загрузки файла {filename}:'
-                        f' {response.status_code} — размер файла больше допустимого.')
-                elif response.status_code == 500:
-                    print(
-                        f'Статус загрузки файла {filename}:'
-                        f' {response.status_code} —  ошибка сервера, попробуйте повторить загрузку.')
-                elif response.status_code == 507:
-                    print(
-                        f'Статус загрузки файла {filename}:'
-                        f' {response.status_code} —  для загрузки файла не хватает места на Диске пользователя.')
+            if response.status_code == 201:
+                print(f'Статус загрузки файла {filename}:'
+                      f' {response.status_code} — успешно загружено.')
+            elif response.status_code == 202:
+                print(
+                    f'Статус загрузки файла {filename}:'
+                    f' {response.status_code} — файл принят сервером, но еще не был перенесен непосредственно '
+                    f'в Яндекс.Диск.')
+            elif response.status_code == 412:
+                print(
+                    f'Статус загрузки файла {filename}:'
+                    f' {response.status_code} — при дозагрузке файла был передан неверный диапазон '
+                    f'в заголовке Content-Range')
+            elif response.status_code == 413:
+                print(
+                    f'Статус загрузки файла {filename}:'
+                    f' {response.status_code} — размер файла больше допустимого.')
+            elif response.status_code == 500:
+                print(
+                    f'Статус загрузки файла {filename}:'
+                    f' {response.status_code} —  ошибка сервера, попробуйте повторить загрузку.')
+            elif response.status_code == 507:
+                print(
+                    f'Статус загрузки файла {filename}:'
+                    f' {response.status_code} —  для загрузки файла не хватает места на Диске пользователя.')
 
 
 class Google_Drive:
@@ -223,6 +215,5 @@ vk = VK(vk_access_token, vk_user_id)
 
 yd.upload_photos()
 gdrive = Google_Drive('root')
-# yd.create_folder()
 
 gdrive.upload_file()
